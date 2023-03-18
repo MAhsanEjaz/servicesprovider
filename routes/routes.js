@@ -59,6 +59,27 @@ app.get("/categories/:pname/sub-categories", async (req, res) => {
 });
 
 
+// cart database find with id
+
+
+app.get("/categories/:pname/cart-categories", async (req, res) => {
+    try {
+      // const db = req.app.locals.db;
+      const pname = req.params.pname;
+      const collection = db.collection('cartdatabase');
+      collection.find({pname}).toArray(function(err, docs) {
+        if (err) throw err;
+        res.json(docs);
+      });
+     
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+
+
+
+
 
 !// full categories search
 
