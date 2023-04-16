@@ -1,18 +1,39 @@
 const express = require('express');
+// const fetch = require('');
 
 
 const app = express.Router();
+
+const QURAN_API_URL = 'http://api.alquran.cloud/v1/quran';
+const QURANIC_AUDIO_API_URL = 'https://quranicaudio.com/api/surahs';
+
+
+
+const imageData = require('../models/imageuploadingmodel');
+
+
+const Product = require('../models/checkoutmodel');
+const axios = require('axios');
+
+
+
+
+const multer = require('multer');
+
+app.use(express.static('uploads'))
+
+
+
+
 
 const MongoClient = require('mongodb').MongoClient;
 
 
 MongoClient.connect('mongodb+srv://kuza:kuza12345@cluster0.kpotsvr.mongodb.net/?retryWrites=true&w=majority',function(err, client){
 
-
 if (err) throw err;
 console.log('Connected to MongoDB!');
 const db = client.db('requestservice');
-
 const collection = db.collection('request');
 const maintainServiceCollection = db.collection('maintainservice');
 
@@ -28,17 +49,12 @@ const maintainServiceCollection = db.collection('maintainservice');
 
   !// Define the API endpoint here...
 
-
   app.get('/api/mycollection', function(req, res) {
     collection.find({}).toArray(function(err, docs) {
       if (err) throw err;
       res.json(docs);
     });
   });
-
-
-
-
 
 !// sub cat with id
 
@@ -58,9 +74,7 @@ app.get("/categories/:pname/sub-categories", async (req, res) => {
   }
 });
 
-
 // cart database find with id
-
 
 app.get("/categories/:pname/cart-categories", async (req, res) => {
     try {
@@ -77,12 +91,7 @@ app.get("/categories/:pname/cart-categories", async (req, res) => {
     }
   });
 
-
-
-
-
 !// full categories search
-
 
 app.get('/search', async (req, res) => {
   const searchTerm = req.query.q;
@@ -107,13 +116,58 @@ app.get('/search', async (req, res) => {
     res.status(500).send('Error searching for products');
   }
 });
-
-
-
-
-
-
 })
+
+
+// Set up Multer to handle image uploads
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
+
+// Create a new post with multiple images
+app.post('/image', upload.array('images'), async (req, res) => {
+  try {
+    const { title } = req.body;
+    const images = req.files.map(file => {
+      return { url: `${file.filename}`, caption: '' };
+    });
+
+    const post = new imageData({ title, images });
+    await post.save();
+
+    res.json({ success: true, post });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+app.get('/multi',async(req, res)=>{
+  const post = await imageData.find();
+  res.json(post);
+})
+
+
+
+app.post('/api/products', async (req, res) => {
+  const product = new Product({
+    myName: req.body.myName,
+    price: req.body.price
+  });
+  await product.save();
+  res.send(product);
+});
+
+
+
+
 
 
 
