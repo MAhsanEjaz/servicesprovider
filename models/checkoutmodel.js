@@ -6,12 +6,11 @@ const checkout = mongoose.Schema({
     type:String,
     required: true },
 
-    items:{
-
-    type: Array,
-    required: true
-
-  }
+    items:[{
+      name: String,
+      price: Number,
+      quantity: Number,
+    },]
 
 })
 

@@ -49,7 +49,7 @@ app.get('/api/cart/:userId', (req, res) => {
   CheckoutModel.findOne({ userId }, (err, cart) => {
     if (err) {
       console.error(err);
-      res.status(500).send('Error retrieving cart');
+      res.status(500).json('Error retrieving cart');
     } else {
       res.send(cart);
     }
