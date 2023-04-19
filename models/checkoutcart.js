@@ -17,4 +17,8 @@ const checkoutSchema = new mongoose.Schema({
   total: Number
 });
 
-module.exports = mongoose.model('cart',checkoutSchema);
+// module.exports = mongoose.model('cart',checkoutSchema);
+
+const cart = mongoose.model('checkoutcart', checkoutSchema);
+
+module.exports = cart;

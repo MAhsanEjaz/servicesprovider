@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express.Router();
-// const MyProducts = require('../models/cart');
+const MyProducts = require('../models/cart');
 const imageData = require('../models/imageuploadingmodel');
 const multer = require('multer');
 app.use(express.static('uploads'))
@@ -159,12 +159,12 @@ app.get('/multi',async(req, res)=>{
 // });
 
 
-// app.get('/api/cart', async (req, res) => {
+app.get('/api/cart', async (req, res) => {
   
-//   const cart = await MyProducts.find();
-//   res.json(cart)
+  const cart = await MyProducts.find();
+  res.json(cart)
 
-// });
+});
 
 
 
