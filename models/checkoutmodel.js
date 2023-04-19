@@ -1,11 +1,18 @@
 const mongoose = require('mongoose');
 
+const checkout = mongoose.Schema({
 
+  userId:{
+    type:String,
+    required: true },
 
-const productSchema = new mongoose.Schema({
-    myName: String,
-    price: String
-  });
+    items:{
 
+    type: Array,
+    required: true
 
-module.exports = mongoose.model('checkout', productSchema);
+  }
+
+})
+
+module.exports = mongoose.model('checkoutmodel',checkout);

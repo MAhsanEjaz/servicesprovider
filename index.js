@@ -14,25 +14,17 @@ const mongoose = require('mongoose');
 const bodyparser = require('body-parser');
 
 
-
 mongoose.connect(process.env.DATABASE||'mongodb+srv://kuza:kuza12345@cluster0.kpotsvr.mongodb.net/?retryWrites=true&w=majority',(err)=>{
     if(!err){
         console.log('Connected');
     }else{
-        console.log('Not connected');
-    }
+        console.log('Not connected');}
 })
 
 app.use('/router',ROUTER);
 app.use(bodyparser.json());
 
 app.use(express.json());
-
-
-
-
-
-
 
 const PORT = process.env.PORT|| 4000;
 

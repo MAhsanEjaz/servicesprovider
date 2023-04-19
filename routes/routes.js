@@ -4,8 +4,7 @@ const express = require('express');
 
 const app = express.Router();
 
-const QURAN_API_URL = 'http://api.alquran.cloud/v1/quran';
-const QURANIC_AUDIO_API_URL = 'https://quranicaudio.com/api/surahs';
+const CheckoutModel = require('../models/checkoutmodel');
 
 
 
@@ -13,7 +12,6 @@ const imageData = require('../models/imageuploadingmodel');
 
 
 const Product = require('../models/checkoutmodel');
-const axios = require('axios');
 
 
 
@@ -22,11 +20,42 @@ const multer = require('multer');
 
 app.use(express.static('uploads'))
 
-
-
-
-
 const MongoClient = require('mongodb').MongoClient;
+
+
+
+app.post('/api/checkout', (req, res) => {
+  const { userId, items } = req.body;
+
+  const cart = new CheckoutModel({
+    userId,
+    items
+  });
+
+  cart.save((err, cart) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error saving cart');
+    } else {
+      res.send('Cart saved successfully');
+    }
+  });
+});
+
+
+app.get('/api/cart/:userId', (req, res) => {
+  const userId = req.params.userId;
+
+  CheckoutModel.findOne({ userId }, (err, cart) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error retrieving cart');
+    } else {
+      res.send(cart);
+    }
+  });
+});
+
 
 
 MongoClient.connect('mongodb+srv://kuza:kuza12345@cluster0.kpotsvr.mongodb.net/?retryWrites=true&w=majority',function(err, client){
@@ -164,6 +193,8 @@ app.post('/api/products', async (req, res) => {
   await product.save();
   res.send(product);
 });
+
+
 
 
 
