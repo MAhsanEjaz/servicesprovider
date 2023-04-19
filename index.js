@@ -23,7 +23,7 @@ mongoose.connect(process.env.DATABASE||'mongodb+srv://kuza:kuza12345@cluster0.kp
 
 app.use(bodyparser.json());
 
-app.use(bodyparser.urlencoded({extended: false}));
+// app.use(bodyparser.urlencoded({extended: false}));
 
 app.use('/router',ROUTER);
 
