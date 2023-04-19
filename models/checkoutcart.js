@@ -9,8 +9,10 @@ const checkoutSchema = new mongoose.Schema({
   items: [
     {
       id: String,
-      title: String,
-      description: String,
+      name: String,
+      price: Number,
+      instruction: String,
+      qty:Number
   
       }
   ],
