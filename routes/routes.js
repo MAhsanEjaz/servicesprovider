@@ -142,6 +142,7 @@ app.post('/api/checkout', async (req, res) => {
     // Create new checkout instance from request body
     const checkout =  new MyProducts({
       userName: req.body.userName,
+      total:req.body.total,
        items: req.body.items
 
     });
