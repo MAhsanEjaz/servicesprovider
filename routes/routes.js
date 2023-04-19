@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express.Router();
-// const MyProducts = require('../models/cart');
+const MyProducts = require('../models/cart');
 const imageData = require('../models/imageuploadingmodel');
 const multer = require('multer');
 app.use(express.static('uploads'))
@@ -137,34 +137,34 @@ app.get('/multi',async(req, res)=>{
 
 
 
-// app.post('/api/checkout', async (req, res) => {
-//   try {
-//     // Create new checkout instance from request body
-//     const checkout =  new MyProducts({
-//       userName: req.body.userName,
-//        items: req.body.items
+app.post('/api/checkout', async (req, res) => {
+  try {
+    // Create new checkout instance from request body
+    const checkout =  new MyProducts({
+      userName: req.body.userName,
+       items: req.body.items
 
-//     });
+    });
 
-//     // Save checkout instance to MongoDB
-//     await checkout.save();
+    // Save checkout instance to MongoDB
+    await checkout.save();
 
-//     // Send success response
-//     res.status(200).json('Checkout saved successfully');
-//   } catch (err) {
-//     // Send error response
-//     res.status(500).json('Internal server error');
-//     console.log(err);
-//   }
-// });
+    // Send success response
+    res.status(200).json('Checkout saved successfully');
+  } catch (err) {
+    // Send error response
+    res.status(500).json('Internal server error');
+    console.log(err);
+  }
+});
 
 
-// app.get('/api/cart', async (req, res) => {
+app.get('/api/cart', async (req, res) => {
   
-//   const cart = await MyProducts.find();
-//   res.json(cart)
+  const cart = await MyProducts.find();
+  res.json(cart)
 
-// });
+});
 
 
 
