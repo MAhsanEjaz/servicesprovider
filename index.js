@@ -21,13 +21,13 @@ mongoose.connect(process.env.DATABASE||'mongodb+srv://kuza:kuza12345@cluster0.kp
         console.log('Not connected');}
 })
 
-
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({extended: false}));
 
 app.use('/router',ROUTER);
 
 
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({extended: false}));
+
 app.use(express.json());
 
 const PORT = process.env.PORT|| 4000;

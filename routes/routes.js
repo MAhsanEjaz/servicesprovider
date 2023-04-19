@@ -159,17 +159,11 @@ app.post('/api/checkout', async (req, res) => {
 });
 
 
-app.get('/api/cart/:userName', (req, res) => {
-  const userName = req.params.userName;
+app.get('/api/cart', async (req, res) => {
+  
+  const cart = await MyProducts.find();
+  res.json(cart)
 
-  MyProducts.findOne({ userName }, (err, cart) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json('Error retrieving cart');
-    } else {
-      res.send(cart);
-    }
-  });
 });
 
 
