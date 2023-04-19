@@ -1,61 +1,10 @@
 const express = require('express');
-// const fetch = require('');
-
-
 const app = express.Router();
-
-const CheckoutModel = require('../models/checkoutmodel');
-
-
-
+const MyProducts = require('../models/cart');
 const imageData = require('../models/imageuploadingmodel');
-
-
-const Product = require('../models/checkoutmodel');
-
-
-
-
 const multer = require('multer');
-
 app.use(express.static('uploads'))
-
 const MongoClient = require('mongodb').MongoClient;
-
-
-
-app.post('/api/checkout', (req, res) => {
-  const { userId, items } = req.body;
-
-  const cart = new CheckoutModel({
-    userId,
-    items
-  });
-
-  cart.save((err, cart) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error saving cart');
-    } else {
-      res.send('Cart saved successfully');
-    }
-  });
-});
-
-
-app.get('/api/cart/:userId', (req, res) => {
-  const userId = req.params.userId;
-
-  CheckoutModel.findOne({ userId }, (err, cart) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json('Error retrieving cart');
-    } else {
-      res.send(cart);
-    }
-  });
-});
-
 
 
 MongoClient.connect('mongodb+srv://kuza:kuza12345@cluster0.kpotsvr.mongodb.net/?retryWrites=true&w=majority',function(err, client){
@@ -185,16 +134,43 @@ app.get('/multi',async(req, res)=>{
 
 
 
-app.post('/api/products', async (req, res) => {
-  const product = new Product({
-    myName: req.body.myName,
-    price: req.body.price
-  });
-  await product.save();
-  res.send(product);
+
+
+
+app.post('/api/checkout', async (req, res) => {
+  try {
+    // Create new checkout instance from request body
+    const checkout =  new MyProducts({
+      userName: req.body.userName,
+       items: req.body.items
+
+    });
+
+    // Save checkout instance to MongoDB
+    await checkout.save();
+
+    // Send success response
+    res.status(200).json('Checkout saved successfully');
+  } catch (err) {
+    // Send error response
+    res.status(500).json('Internal server error');
+    console.log(err);
+  }
 });
 
 
+app.get('/api/cart/:userName', (req, res) => {
+  const userName = req.params.userName;
+
+  MyProducts.findOne({ userName }, (err, cart) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json('Error retrieving cart');
+    } else {
+      res.send(cart);
+    }
+  });
+});
 
 
 
