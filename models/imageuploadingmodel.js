@@ -17,6 +17,8 @@ const postSchema = new mongoose.Schema({
   }]
 });
 
-const Post = mongoose.model('imageuploading', postSchema);
+module.exports = mongoose.model('imageuploading',postSchema);
 
-module.exports = Post;
+// const Post = mongoose.model('imageuploading', postSchema);
+
+// module.exports = Post;
