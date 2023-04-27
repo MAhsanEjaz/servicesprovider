@@ -2,7 +2,7 @@ const express = require('express');
 const app = express.Router();
 const MyProducts = require('../models/checkoutcart');
 const imageData = require('../models/imageuploadingmodel');
-const userDataModel = require('../models/usermodel');
+// const userDataModel = require('../models/usermodel');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt =require("bcrypt");
@@ -182,42 +182,42 @@ app.get('/api/cart', async (req, res) => {
 
 
 
-!// registration api
+// !// registration api
 
-app.post('/register', async (req, res) => {
-  const { email, password } = req.body;
-  const existingUser = await userDataModel.findOne({ email });
-  if (existingUser) {
-    return res.status(400).json({ message: 'User already exists' });
-  }
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(password, salt);
-  const newUser = new userDataModel({ email, password: hashedPassword });
-  try {
-    await newUser.save();
-    res.status(201).json({ message: 'User created successfully' });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-
+// app.post('/register', async (req, res) => {
+//   const { email, password } = req.body;
+//   const existingUser = await userDataModel.findOne({ email });
+//   if (existingUser) {
+//     return res.status(400).json({ message: 'User already exists' });
+//   }
+//   const salt = await bcrypt.genSalt();
+//   const hashedPassword = await bcrypt.hash(password, salt);
+//   const newUser = new userDataModel({ email, password: hashedPassword });
+//   try {
+//     await newUser.save();
+//     res.status(201).json({ message: 'User created successfully' });
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// });
 
 
 
-  app.post('/login/api', async (req, res) => {
-    const { email, password } = req.body;
-    const user = await userDataModel.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-    const token = jwt.sign({ id: user._id }, 'secret');
-    res.json({ message: 'Login successful', token });
-  });
+
+
+//   app.post('/login/api', async (req, res) => {
+//     const { email, password } = req.body;
+//     const user = await userDataModel.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ message: 'Invalid email or password' });
+//     }
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
+//     if (!isPasswordValid) {
+//       return res.status(400).json({ message: 'Invalid email or password' });
+//     }
+//     const token = jwt.sign({ id: user._id }, 'secret');
+//     res.json({ message: 'Login successful', token });
+//   });
 
 
 
