@@ -3,7 +3,6 @@ const app = express.Router();
 const MyProducts = require('../models/checkoutcart');
 const imageData = require('../models/imageuploadingmodel');
 const userDataModel = require('../models/usermodel');
-
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt =require("bcrypt");
@@ -185,24 +184,22 @@ app.get('/api/cart', async (req, res) => {
 
 !// registration api
 
-app.post('/registration/api',async(req,res)=>{
-    const {email, password} = req.body;
-    const user = await userDataModel.findOne({email});
-    if(user){
-      return res.json({message: "Email already exists"});
-    }
-    const salt = bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(password, salt)
-    const newUser = new userDataModel({email, password: hashPassword});
-    try{
-     await newUser.save()
-     res.status(201).json({ message: 'User created successfully' });
-    }catch(err){
-      console.log(err);
-
-      res.status(500).json({ message: 'Registration Failed'});
-    }
-  })
+app.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+  const existingUser = await userDataModel.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({ message: 'User already exists' });
+  }
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+  const newUser = new userDataModel({ email, password: hashedPassword });
+  try {
+    await newUser.save();
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
 
   app.post('/login/api', async (req, res) => {
