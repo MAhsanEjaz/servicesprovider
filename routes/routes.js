@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express.Router();
+const UserData = require('../models/usermodel');
 const MyProducts = require('../models/checkoutcart');
 const imageData = require('../models/imageuploadingmodel');
-const userDataModel = require('../models/usermodel');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt =require("bcrypt");
@@ -186,13 +186,13 @@ app.get('/api/cart', async (req, res) => {
 
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
-  const existingUser = await userDataModel.findOne({ email });
+  const existingUser = await UserData.findOne({ email });
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
-  const newUser =  userDataModel({ email, password: hashedPassword });
+  const newUser =  UserData({ email, password: hashedPassword });
   try {
     await newUser.save();
     res.status(201).json({ message: 'User created successfully' });
@@ -207,7 +207,7 @@ app.post('/register', async (req, res) => {
 
   app.post('/login/api', async (req, res) => {
     const { email, password } = req.body;
-    const user = await userDataModel.findOne({ email });
+    const user = await UserData.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
