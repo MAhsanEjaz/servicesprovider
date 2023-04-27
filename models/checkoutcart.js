@@ -14,7 +14,7 @@ const checkoutSchema = new mongoose.Schema({
       instruction: String,
       qty:Number
   
-      }
+    }
   ],
   total: Number
 });

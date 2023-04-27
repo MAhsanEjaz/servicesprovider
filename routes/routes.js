@@ -3,6 +3,10 @@ const app = express.Router();
 const MyProducts = require('../models/checkoutcart');
 const imageData = require('../models/imageuploadingmodel');
 const multer = require('multer');
+const jwt = require('jsonwebtoken');
+const bcrypt =require("bcrypt");
+const userDataModel = require('../models/usermodel');
+
 app.use(express.static('uploads'))
 const MongoClient = require('mongodb').MongoClient;
 
@@ -36,8 +40,7 @@ const maintainServiceCollection = db.collection('maintainservice');
 
 !// sub cat with id
 
-
-app.get("/categories/:pname/sub-categories", async (req, res) => {
+  app.get("/categories/:pname/sub-categories", async (req, res) => {
   try {
     // const db = req.app.locals.db;
     const pname = req.params.pname;
@@ -97,7 +100,8 @@ app.get('/search', async (req, res) => {
 })
 
 
-// Set up Multer to handle image uploads
+// Set up Multer to handle image uploads---->
+
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, 'uploads/');
@@ -108,7 +112,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Create a new post with multiple images
+
+
+
+
+!!// Create a new post with multiple images
+
 app.post('/image', upload.array('images'), async (req, res) => {
   try {
     const { title } = req.body;
@@ -127,15 +136,18 @@ app.post('/image', upload.array('images'), async (req, res) => {
 });
 
 
+
+
+
+!!/// multiImages Get Api--------->!!!!
+
 app.get('/multi',async(req, res)=>{
   const post = await imageData.find();
   res.json(post);
 })
 
 
-
-
-
+!!// checkout api------->!!!
 
 app.post('/api/checkout', async (req, res) => {
   try {
@@ -146,10 +158,8 @@ app.post('/api/checkout', async (req, res) => {
        items: req.body.items
 
     });
-
     // Save checkout instance to MongoDB
     await checkout.save();
-
     // Send success response
     res.status(200).json('Checkout saved successfully');
   } catch (err) {
@@ -160,12 +170,53 @@ app.post('/api/checkout', async (req, res) => {
 });
 
 
+
+
+!!// checkOut Data get api----->>>>>>!!
+
 app.get('/api/cart', async (req, res) => {
-  
   const cart = await MyProducts.find();
   res.json(cart)
 
 });
+
+
+
+!// registration api
+
+app.post('/registration/api',async(req,res)=>{
+    const {email, password} = req.body;
+    const user = await userDataModel.findOne({email});
+    if(user){
+      return res.json({message: "Email already exists"});
+    }
+    const salt = bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(password, salt)
+    const newUser = new userDataModel({email, password: hashPassword});
+    try{
+     await newUser.save()
+     res.status(201).json({ message: 'User created successfully' });
+    }catch(err){
+      console.log(err);
+
+      res.status(500).json({ message: 'Registration Failed'});
+    }
+  })
+
+
+  app.post('/login/api', async (req, res) => {
+    const { email, password } = req.body;
+    const user = await userDataModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+    const token = jwt.sign({ id: user._id }, 'secret');
+    res.json({ message: 'Login successful', token });
+  });
 
 
 
