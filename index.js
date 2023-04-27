@@ -1,13 +1,8 @@
 const express = require('express');
 
 const app = express();
-
-
 const ROUTER = require('./routes/routes');
-
 app.use(express.static('uploads'))
-
-
 
 const mongoose = require('mongoose');
 

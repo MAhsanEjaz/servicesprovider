@@ -2,10 +2,11 @@ const express = require('express');
 const app = express.Router();
 const MyProducts = require('../models/checkoutcart');
 const imageData = require('../models/imageuploadingmodel');
+const userDataModel = require('../models/usermodel');
+
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt =require("bcrypt");
-const userDataModel = require('../models/usermodel');
 
 app.use(express.static('uploads'))
 const MongoClient = require('mongodb').MongoClient;
