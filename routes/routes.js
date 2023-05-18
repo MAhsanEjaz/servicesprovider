@@ -6,7 +6,6 @@ const imageData = require('../models/imageuploadingmodel');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt =require("bcrypt");
-
 app.use(express.static('uploads'))
 const MongoClient = require('mongodb').MongoClient;
 
@@ -171,7 +170,6 @@ app.post('/api/checkout', async (req, res) => {
 
 
 
-
 !!// checkOut Data get api----->>>>>>!!
 
 app.get('/api/cart', async (req, res) => {
@@ -185,14 +183,14 @@ app.get('/api/cart', async (req, res) => {
 !// registration api
 
 app.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const {name, email, password } = req.body;
   const existingUser = await UserData.findOne({ email });
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
-  const newUser =  UserData({ email, password: hashedPassword });
+  const newUser =  UserData({ email, password: hashedPassword,name });
   try {
     await newUser.save();
     res.status(201).json({ message: 'User created successfully' });
@@ -202,7 +200,7 @@ app.post('/register', async (req, res) => {
 });
 
 
-
+!// login api
 
 
   app.post('/login/api', async (req, res) => {
@@ -216,13 +214,12 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
     const token = jwt.sign({ id: user._id }, 'secret');
-    res.json({ message: 'Login successful', token });
+    res.status(200).json({ message: 'Login successful', token });
   });
 
 
 
+  
 
 
-
-
-module.exports = app;
+    module.exports = app;
