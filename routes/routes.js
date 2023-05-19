@@ -187,6 +187,13 @@ app.get('/api/cart', async (req, res) => {
     try {
       const { username, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
+
+
+      const existUser = await userModel.findOne({name});
+
+      if(existUser){
+        res.json(400).json({"message": "User already exists"});
+      }
   
       const user = new userModel({
         username: username,
