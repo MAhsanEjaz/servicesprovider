@@ -25,7 +25,7 @@ app.use('/router',ROUTER);
 
 app.use(express.json());
 
-const PORT = process.env.PORT|| 4000;
+const PORT = process.env.PORT|| 5000;
 
 
 app.listen(PORT);

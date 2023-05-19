@@ -7,6 +7,8 @@ const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt =require("bcrypt");
 app.use(express.static('uploads'))
+
+const userModel = require('../models/loginmodel');
 const MongoClient = require('mongodb').MongoClient;
 
 
@@ -180,42 +182,91 @@ app.get('/api/cart', async (req, res) => {
 
 
 
-!// registration api
-
-app.post('/register', async (req, res) => {
-  const {name, email, password } = req.body;
-  const existingUser = await UserData.findOne({ email });
-  if (existingUser) {
-    return res.status(400).json({ message: 'User already exists' });
-  }
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(password, salt);
-  const newUser =  UserData({ email, password: hashedPassword,name });
-  try {
-    await newUser.save();
-    res.status(201).json({ message: 'User created successfully' });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-
-!// login api
-
-
-  app.post('/login/api', async (req, res) => {
-    const { email, password } = req.body;
-    const user = await UserData.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+  // Registration API
+  app.post('/register', upload.single('profileImage'), async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const user = new userModel({
+        username: username,
+        password: hashedPassword,
+        profileImage: req.file.filename,
+      });
+  
+      await user.save();
+  
+      res.status(200).json({ message: 'User registered successfully' });
+    } catch (error) {
+      console.error('Error registering user:', error);
+      res.status(500).json({ error: 'An error occurred while registering user' });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-    const token = jwt.sign({ id: user._id }, 'secret');
-    res.status(200).json({ message: 'Login successful', token });
   });
+
+
+  
+  // Login API
+  app.post('/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+  
+      const user = await userModel.findOne({ username: username });
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
+  
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
+  
+      const token = jwt.sign({ userId: user._id }, 'secretkey');
+  
+      res.status(200).json({ token: token ,profileImage: user.profileImage,});
+    } catch (error) {
+      console.error('Error logging in:', error);
+      res.status(500).json({ error: 'An error occurred while logging in' });
+    }
+  });
+
+
+
+// !// registration api
+
+// app.post('/register', async (req, res) => {
+//   const {name, email, password } = req.body;
+//   const existingUser = await UserData.findOne({ email });
+//   if (existingUser) {
+//     return res.status(400).json({ message: 'User already exists' });
+//   }
+//   const salt = await bcrypt.genSalt();
+//   const hashedPassword = await bcrypt.hash(password, salt);
+//   const newUser =  UserData({ email, password: hashedPassword,name });
+//   try {
+//     await newUser.save();
+//     res.status(201).json({ message: 'User created successfully' });
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// });
+
+
+// !// login api
+
+
+//   app.post('/login/api', async (req, res) => {
+//     const { email, password } = req.body;
+//     const user = await UserData.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ message: 'Invalid email or password' });
+//     }
+//     const isPasswordValid = await bcrypt.compare(password, user.password);
+//     if (!isPasswordValid) {
+//       return res.status(400).json({ message: 'Invalid email or password' });
+//     }
+//     const token = jwt.sign({ id: user._id }, 'secret');
+//     res.status(200).json({ message: 'Login successful', token });
+//   });
 
 
 
