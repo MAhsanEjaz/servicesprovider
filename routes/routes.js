@@ -191,9 +191,7 @@ app.get('/api/cart', async (req, res) => {
 
       const existUser = await userModel.findOne({username});
 
-      if(existUser){
-        res.status(400).json({"message": "User already exists"});
-      }
+     
   
       const user = new userModel({
         username: username,
