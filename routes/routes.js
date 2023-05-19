@@ -188,10 +188,6 @@ app.get('/api/cart', async (req, res) => {
       const { username, password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
 
-
-      const existUser = await userModel.findOne({username});
-
-     
   
       const user = new userModel({
         username: username,
