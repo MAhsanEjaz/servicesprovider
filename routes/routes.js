@@ -232,6 +232,16 @@ app.get('/api/cart', async (req, res) => {
 
 
 
+  app.get('getAllUsers',async(req,res)=>{
+
+
+    const data = await userModel.find()
+
+    res.json(data);
+
+  })
+
+
 // !// registration api
 
 // app.post('/register', async (req, res) => {
