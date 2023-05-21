@@ -103,15 +103,26 @@ app.get('/search', async (req, res) => {
 
 // Set up Multer to handle image uploads---->
 
+
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
+    // Specify the destination directory where the uploaded files will be stored
     cb(null, 'uploads/');
   },
-  filename: function(req, file, cb) {
-    cb(null, file.originalname);
+  filename: function (req, file, cb) {
+    // Generate a unique filename for the uploaded file
+    cb(null, Date.now() + '-' + file.originalname);
   }
 });
-const upload = multer({ storage: storage });
+
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Maximum file size (in bytes) - 5MB in this example
+  },
+ 
+});
 
 
 
