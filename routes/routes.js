@@ -121,6 +121,10 @@ const upload = multer({
   limits: {
     fileSize: 5 * 1024 * 1024, // Maximum file size (in bytes) - 5MB in this example
   },
+  resize: {
+    width: 3000,
+    height: 4512,
+  },
  
 });
 
