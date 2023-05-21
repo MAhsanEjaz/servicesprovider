@@ -257,6 +257,33 @@ app.get('/api/cart', async (req, res) => {
   })
 
 
+  app.get('/getAllUsersWIthPagination', async (req, res) => {
+    const page = parseInt(req.query.page) || 1; // Current page number
+    const limit = parseInt(req.query.limit) || 5; // Number of users per page
+  
+    try {
+      const count = await userModel.countDocuments(); // Total number of users
+      const totalPages = Math.ceil(count / limit); // Calculate the total number of pages
+  
+      const skip = (page - 1) * limit; // Calculate the number of documents to skip
+  
+      const data = await userModel
+        .find()
+        .skip(skip)
+        .limit(limit);
+  
+      res.json({
+        currentPage: page,
+        totalPages: totalPages,
+        totalCount: count,
+        data: data
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+
 // !// registration api
 
 // app.post('/register', async (req, res) => {
